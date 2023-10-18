@@ -6,7 +6,7 @@ class Product {
     thumsbnail
     code
     stock
-    constructor( id, title, description, price, thumsbnail, code, stock ) {
+    constructor(id, title, description, price, thumsbnail, code, stock) {
         this.id = id
         this.title = title
         this.description = description
@@ -19,51 +19,55 @@ class Product {
 
 class ProductManager {
 
-    dataProduct
+    Products
 
     static #ultimoId = 0
 
     constructor() {
-        this.dataProduct = [];
+        this.Products = [];
     }
 
-static generarNuevoID() {
-    return ++ProductManager.#ultimoId;
+    static generarNuevoID() {
+        return ++ProductManager.#ultimoId;
+    }
+
+    addProduct({ title, description, price, thumbnail, code, stock }) {
+
+        const codRepeat = this.Products.find((codigo) => codigo.code === code)
+        if (!title || !description || !price || !thumbnail || !code || !stock) {
+            console.log("todos los campos son obligatorios")
+        }
+            if (!codRepeat) {
+                const id = ProductManager.generarNuevoID();
+                const producto = new Product(id, title, description, price, thumbnail, code, stock)
+                console.log(producto)
+                this.Products.push(producto)
+                return producto;
+            } else {
+
+                return console.log(`El codigo está repetido, no se puede agregar este producto`)
+
+            }
+        
+    };
+
+    getProduct() {
+        return this.Products;
+    };
+
+    getProductById(id) {
+        const searxhId = this.Products.find((search) => search.id === id)
+        if (!searxhId) {
+            console.error(`la ID "${id}" solicitada no Existe`)
+        }
+        return searxhId;
+    }
+
+    delProduct(id) {
+        const deleteProduct = this.Products.filter((borrar) => borrar.id !== id);
+        return this.Products = deleteProduct;
+    }
 }
-
-addProduct( { title, description, price, thumbnail, code, stock } ) {
-
-    const codRepeat = this.dataProduct.find((codigo) => codigo.code === code)
-
-    if (!codRepeat) {
-        const id = ProductManager.generarNuevoID();       
-        const producto = new Product( id, title, description, price, thumbnail, code, stock )
-        console.log(producto)
-        this.dataProduct.push( producto )
-        return producto;
-    } else {
-
-        return console.log(`El codigo está repetido, no se puede agregar este producto`)
-
-    }
-};
-
-getProduct() {
-    return this.dataProduct;
-};
-
-getProductById (id) {
-    const searxhId = this.dataProduct.find((search) => search.id === id)
-    if (!searxhId) {
-        console.error(`la ID "${id}" solicitada no Existe`)
-    }
-    return searxhId;
-}
-
-delProduct(id) {
-    const deleteProduct = this.dataProduct.filter((borrar) => borrar.id !== id);
-    return this.dataProduct = deleteProduct;
-}}
 
 const pm = new ProductManager()
 const p1 = pm.addProduct({
@@ -91,6 +95,15 @@ const p3 = pm.addProduct({
     thumbnail: 'Sin imagen3',
     code: 'abc1233',
     stock: 30
+})
+
+const p4 = pm.addProduct({
+    title: '',
+    description: 'Este es un producto prueba4',
+    price: 400,
+    thumbnail: 'Sin imagen4',
+    code: 'abc1233',
+    stock: 40
 })
 
 console.log(pm.getProductById(2))
