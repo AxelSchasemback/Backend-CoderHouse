@@ -4,6 +4,7 @@
     "title": "producto prueba1",
     "description": "Este es un producto prueba1",
     "price": 100,
+    "thumbnail": "Sin imagen1",
     "code": "abc1231",
     "stock": 10
   },
@@ -12,6 +13,7 @@
     "title": "producto prueba3",
     "description": "Este es un producto prueba3",
     "price": 300,
+    "thumbnail": "Sin imagen3",
     "code": "abc1233",
     "stock": 30
   },
@@ -20,6 +22,7 @@
     "title": "Update titulo",
     "description": "Este es un producto prueba5",
     "price": 500,
+    "thumbnail": "Sin imagen5",
     "code": "abc123123123",
     "stock": 50
   }

@@ -5,15 +5,15 @@ class Product {
     title
     description
     price
-    thumsbnail
+    thumbnail
     code
     stock
-    constructor({id, title, description, price, thumsbnail, code, stock}) {
+    constructor({ id, title, description, price, thumbnail, code, stock }) {
         this.id = id
         this.title = title
         this.description = description
         this.price = price
-        this.thumsbnail = thumsbnail
+        this.thumbnail = thumbnail
         this.code = code
         this.stock = stock
     }
@@ -69,7 +69,7 @@ class ProductManager {
         }
         if (!codRepeat) {
             const id = ProductManager.genNewId();
-            const newProduct = new Product({id, title, description, price, thumbnail, code, stock})
+            const newProduct = new Product({ id, title, description, price, thumbnail, code, stock })
             this.Products.push(newProduct)
             await this.#writeProduct()
             return newProduct;
@@ -90,7 +90,7 @@ class ProductManager {
         await this.#readProduct()
         const searxhId = this.Products.find((search) => search.id === id)
         if (!searxhId) {
-            console.error(`la ID "${id}" solicitada no Existe`)
+            throw new Error(`la ID "${id}" solicitada no Existe`)
         }
         return searxhId;
     }
@@ -100,7 +100,7 @@ class ProductManager {
         const item = this.Products.find(i => i.id === id)
         if (item) {
             const newArray = this.Products.filter(array => array.id !== id)
-            const newUpdate = new Product({...item, ...update })
+            const newUpdate = new Product({ ...item, ...update })
             this.Products = [...newArray, newUpdate]
             await this.#writeProduct()
             return newUpdate
@@ -173,7 +173,7 @@ async function main() {
 
     console.log(await pm.getProductById(2))
     console.log(await pm.delProduct(2))
-    console.log(await pm.updateProduct(4, {title: 'Update titulo'}))
+    console.log(await pm.updateProduct(4, { title: 'Update titulo' }))
     console.log(await pm.getProduct())
     // pm.reset()
 }
