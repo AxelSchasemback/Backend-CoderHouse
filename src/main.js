@@ -1,4 +1,4 @@
-const { promises: fs } = require('fs')
+import fs from 'fs/promises'
 
 class Product {
     id
@@ -19,7 +19,7 @@ class Product {
     }
 }
 
-class ProductManager {
+export class ProductManager {
 
     Products
     static #numId = 0;
@@ -64,19 +64,19 @@ class ProductManager {
     async addProduct({ title, description, price, thumbnail, code, stock }) {
         await this.#readProduct()
         const codRepeat = this.Products.find((product) => product.code === code)
+
         if (!title || !description || !price || !thumbnail || !code || !stock) {
-            console.log("todos los campos son obligatorios")
+            throw new Error(`todos los campos son obligatorios`)
         }
-        if (!codRepeat) {
+        else if (!codRepeat) {
             const id = ProductManager.genNewId();
             const newProduct = new Product({ id, title, description, price, thumbnail, code, stock })
             this.Products.push(newProduct)
             await this.#writeProduct()
             return newProduct;
+
         } else {
-
-            return console.log(`El codigo está repetido, no se puede agregar este producto`)
-
+            throw new Error(`El codigo está repetido, no se puede agregar este producto`)
         }
 
     };
@@ -124,7 +124,7 @@ class ProductManager {
 
 async function main() {
 
-    const pm = new ProductManager({ ruta: 'Products.json' })
+    const pm = new ProductManager({ ruta: '../db/Products.json' })
     await pm.init();
     const p1 = await pm.addProduct({
         title: 'producto prueba1',
@@ -154,16 +154,16 @@ async function main() {
     })
 
     const p4 = await pm.addProduct({
-        title: '',
+        title: 'fae',
         description: 'Este es un producto prueba4',
         price: 400,
         thumbnail: 'Sin imagen4',
-        code: 'abc1233',
+        code: 'abc12334',
         stock: 40
     })
 
     const p5 = await pm.addProduct({
-        title: '',
+        title: 'si',
         description: 'Este es un producto prueba5',
         price: 500,
         thumbnail: 'Sin imagen5',
@@ -171,10 +171,10 @@ async function main() {
         stock: 50
     })
 
-    console.log(await pm.getProductById(2))
-    console.log(await pm.delProduct(2))
-    console.log(await pm.updateProduct(4, { title: 'Update titulo' }))
-    console.log(await pm.getProduct())
+    // console.log(await pm.getProductById(2))
+    // console.log(await pm.delProduct(2))
+    // console.log(await pm.updateProduct(4, { title: 'Update titulo' }))
+    // console.log(await pm.getProduct())
     // pm.reset()
 }
 main()
