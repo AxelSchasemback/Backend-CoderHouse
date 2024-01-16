@@ -1,41 +1,40 @@
-import express from 'express'
-import { ProductManager } from './main.js'
+import express from 'express';
+import { apiRouter } from './Routers/apiRouter.js';
+import { viewsRouter } from './Routers/ViewRouter.js';
+import { engine } from 'express-handlebars';
+import mongoose from 'mongoose';
+import { serverSession } from './middlewares/middle-session.js';
+import cookieParser from 'cookie-parser'
+import { MONGODB_URL, PORT, COOKIE_SECRET } from './config.js';
+import { authenticate } from './middlewares/passport.js';
 
-const app = express()
-app.use(express.json())
+await mongoose.connect(MONGODB_URL);
+console.log(`Base de datos conectada a ${MONGODB_URL}`);
 
-const pm = new ProductManager({ ruta: '../db/Products.json' })
+const app = express();
 
-// app.get('/products', async (req, res) => {
-//     res.json({ productos: await pm.getProduct() })
-// })
+app.use(serverSession)
+app.use(authenticate)
 
-app.get('/products', async (req, res) => {
+app.use(express.json());
 
-    const limit = req.query.limit;
-    const allProducts = await pm.getProduct()
+app.use(express.urlencoded({ extended: true }));
 
-    if (limit) {
-        const limitValue = parseInt(limit)
-        const limitedProducts = allProducts.slice(0, limitValue);
-        res.json( limitedProducts );
+app.use(cookieParser(COOKIE_SECRET))
 
-    } else {  
-        res.json({ productos: await pm.getProduct() });
-    }
-})
+viewsRouter.use('/static', express.static('./static'));
 
-app.get('/products/:id', async (req, res) => {
-    const idProducts = parseInt(req.params['id'])
-    const search = await pm.getProductById(idProducts)
-    res.json({ productos: await search })
-})
+app.engine('handlebars', engine());
 
+app.set('views', './static/views');
 
-app.get('/', (req, res) => {
-    res.sendFile('index.html', { root: '../views' })
-})
+app.set('view engine', 'handlebars');
 
-app.listen(27015, () => {
-    console.log('listening on port 27015')
-})
+app.use('/', viewsRouter);
+
+app.use('/api', apiRouter);
+
+app.listen(PORT, () => {
+    console.log(`Listening on port ${PORT}`);
+});
+
